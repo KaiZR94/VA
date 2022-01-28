@@ -1,7 +1,13 @@
 ---
-title: "About this site"
+title: "About me"
 description: |
-  This website consists of a collection of works done for ISS608 Visual Analytics and Applications
+  I am currently a full-time student in my 2nd term of the Analyst track of the Masters of IT in Business in Singapore Management University.
+  
+  
+  [My Linked-in Profile](https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/)
+  
+  |
+  [Singapore Management University Master of IT in Business](https://scis.smu.edu.sg/master-it-business)
 ---
 
 ```{r setup, include=FALSE}
