@@ -1,0 +1,78 @@
+---
+title: "In Class Exercise 1"
+description: |
+  Building Elegant Graphics w R using ggplot2.
+author:
+  - name: Tan Jit Kai
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+#_setup_
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+#___Installing and Loading the require libraries___
+
+```{r}
+packages = c('tidyverse')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+#__Loading CSV file__
+```{r, echo=TRUE}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+#__ggplot2 creation__
+```{r, echo = TRUE}
+ggplot(data=exam_data,
+       aes(x = MATHS)) + 
+  geom_histogram(bins=10,
+                boundary = 100,
+                color="black",
+                fill="grey") +
+  ggtitle("Distribution of Maths Scores")
+```
+#_gender seggregated_
+```{r, echo = TRUE}
+ggplot(data=exam_data,
+       aes(x = MATHS,
+           fill = GENDER)) + 
+  geom_histogram(bins=20,
+                boundary = 100,
+                color="black") +
+  ggtitle("Distribution of Maths Scores")
+```
+#__violin plot__
+```{r, echo = TRUE}
+ggplot(data=exam_data,
+       aes(y = MATHS,
+           x = GENDER))+
+  geom_violin(fill="light blue")+
+  geom_boxplot(alpha=0.5)
+```
+#__stat summary__
+```{r, echo = TRUE}
+ggplot(data = exam_data,
+       aes(y = MATHS, x = GENDER))+
+  geom_boxplot() +
+  stat_summary(geom = "point",
+               fun.y = "mean",
+               color="red",
+               size=4)
+```

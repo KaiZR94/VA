@@ -1,0 +1,210 @@
+---
+title: "Take-Home Exercise 1"
+description: |
+  First take-home exercise for ISS608 using the skills taught in the first 2 lessons.
+  
+  Task: Create two data visualization diagrams for two different datafiles using ggplot2 only.
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+__Loading of Required Packages__
+```{r}
+packages = c('tidyverse','readxl')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+--------------------------------------------------------------------------
+
+___Diagram 01: Pareto Chart for Superstore Returns___
+
+_Loading CSV file in sheets_
+```{r}
+orders <- read_xls("data/Superstore-2021.xls", sheet = "Orders")
+returns <- read_xls("data/Superstore-2021.xls", sheet = "Returns")
+```
+
+_Data Description_
+
+The base excel file contains 3 sheets, the Order sheet, Returns sheet and People sheet. 
+
+The People sheet is irrelevant to the exercise since it only contains the names for the regional store managers for the superstore, thus it was not extracted.
+
+
+
+_Create Joint Dataframe_
+
+Next, we will need to combine the 2 data frames into 1 for our visualization diagram.
+
+```{r}
+joined_tab <- left_join(returns,orders)
+                        by = c("Order ID" = 'Order ID')
+```
+
+_Exclude non-relevant columns and group the returns by their Sub-Category_
+
+Because our goal is to visualize returns by item sub-category, all other details are unnecessary and will be removed whilst we aggregate the return counts for each sub-category.
+
+```{r}
+FC_tab <- joined_tab %>%
+  group_by(`Sub-Category`) %>%
+  summarise('Returns' = n()) %>%
+  ungroup()
+```
+_Same purpose as above code but using dplyr's count method instead_
+```{r}
+freq_returned <- joined_tab %>%
+    count(`Sub-Category`) %>%
+    rename(Returns = n)
+```
+
+_Sorting the dataframe in descending order_
+
+Now we will sort the data in descinding order as required for the pareto chart.
+
+```{r}
+freq_sorted <- freq_returned %>%
+    arrange(desc(Returns))
+```
+
+_Creating a new column for cumulative summation of the returns count)_
+
+Next, we will be creating the required column for the line graph component by creating a cumulative sum column for returns then using that to create a cumulative percentage column.
+
+```{r}
+freq_cum <- freq_sorted %>%
+  mutate(cumfreq = cumsum(Returns))
+
+freq_final <- freq_cum %>%
+  mutate(cumpct = 100 * cumfreq/sum(Returns))
+```
+
+_Creation of scale to be used for the secondary Y-axis (Cumulative Percentage)_
+
+The final preparation step is to create a seperate data-frame for the scale of the line graph and it's Y-axis.
+
+```{r}
+scaleRight <- tail(freq_final$cumpct, n=1)/head(freq_final$Returns, n=1)
+```
+
+__Visualization of the Pareto Chart__
+
+The goal for this portion is to create a Pareto chart that comprises of the following graphs combined into one diagram.
+
+1) Bar graph of the return counts by Sub-Category sorted in descending order.
+2) Line graph of the cumulative percentage of returns by Sub-Category sorted in the descending order of return count for each Sub-Category.
+
+The primary Y-axis will be for the bar graph whilst we create a secondary Y-axis that will be used for the line graph.
+
+A key point to note is that the plot for the line must be divided by the scale used for the secondary axis in order to ensure that the line is scaled correctly.
+
+The final code-chunk is as shown below.
+
+```{r}
+ggplot(freq_final,aes(x = reorder(`Sub-Category`,-Returns))) +
+  geom_bar(aes(y = Returns), stat = "identity")+
+  labs(title = "Pareto Chart for Superstore Returns by Item Sub-Category, Jan 2018 - Jan 2022", x = "Sub-Category") +
+  geom_path(aes(y=cumpct/scaleRight, group=1),colour="red", size=0.9) +
+  geom_point(aes(y=cumpct/scaleRight, group=1),colour="red") +
+  scale_y_continuous(name = "Return Count", sec.axis = sec_axis(~.*scaleRight, name = "Cumulative (%) of Returns")) +
+  theme(text = element_text(size=10),
+        axis.text.x = element_text(angle=90, hjust=1))
+```
+
+--------------------------------------------------------------------------
+___Diagram 02: Age-Gender Population Pyramid of Singapore Residents, June 2021___
+
+_Read CSV_
+```{r}
+base <- read_csv('data/respopagesextod2021.csv')
+```
+_Data Description_
+
+
+The data used in this exercise was obtained from singstat.gov.sg and contains demographics of Singapore residents according to Gender, Age, Type of Dwelling and Planning Area.
+
+_Data Wrangling_
+
+
+As this exercise will only involve the visualization of data for age and gender of the residents, we will first need to sum the 'Pop' for each age-group under both genders.
+
+To achieve this, the group_by and summarise functions from dplyr will be used, as shown below.
+
+
+_Aggregating the population_
+```{r}
+agg_pop <- base %>%
+  group_by(AG,Sex)%>%
+  summarise(Pop = sum(Pop))%>%
+  ungroup()
+```
+_Renaming selected Age Groups_
+
+Changes are made to 2 age groups, '0_to_4' and '5_to_9' so that the Age groups will appear in the correct ascending order when we create the pyramid.
+
+Failing to do so will result in the '5_to_9' age group appearing in the middle as shown in the image below.
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("data/problemdiagram.jpg")  
+```
+
+Hence, we will use the following code to ensure that the 5-9 age group will be placed in it's correct position by adding a "0" ahead of each digit. We will do the same for the '0_to_4' age group to standardize all age groups in this diagram to double digits.
+
+```{r}
+agg_pop$AG[agg_pop$AG=="5_to_9"] <- "05_to_09"
+agg_pop$AG[agg_pop$AG=="0_to_4"] <- "00_to_04"
+```
+
+After aggregation and edits, next is to check for missing data.
+
+```{r}
+apply(agg_pop, 2, function(x) any(is.na(x)))
+```
+
+
+__Creating the visualization__
+
+Finally, once the data has been edited, we will begin the visualization design of the population pyramid.
+
+A population pyramid is a visualization of the count of each attribute of a demographic population (in our case age group) that can be separated into 2 distinct groups (gender, for this exercise).
+
+To build this, we will first create a bar chart in R that contain the count for age group for both genders. To seperate the genders, we will use a negative value of the population for males and females will be use the positive count.
+
+After that, we will establish the scaling for the pyramid.
+
+This will give the base bar chart for the pyramid, sans labeling and the chart angle manipulation. The result is shown below.
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("data/preflip.jpg")  
+```
+
+To complete the pyramid, we will add the appropriate labels before we flip the entire chart such that the Y-axis is now the age-group, giving us the population pyramid we want.
+
+The full code-chunk and result is as shown below
+
+```{r, fig.align = 'center', out.width = '100%', results = 'markup'}
+ggplot(agg_pop, aes(x = AG, fill = Sex,
+                 y = ifelse(test = Sex == "Males",
+                            yes = -Pop, no = Pop))) + 
+  geom_bar(stat = "identity") +
+  scale_y_continuous(breaks = seq(-170000,170000,40000),labels = abs(seq(-170000,170000,40000))) +
+  labs(title = "Population Pyramid for Singapore Residents, June 2021", x = "Age Group", y = "Population Count")+
+  coord_flip()
+```

@@ -1,0 +1,91 @@
+---
+title: "Untitled"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+
+#_setup_
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+#___Installing and Loading the require libraries___
+
+```{r}
+packages = c('tidyverse','readxl')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+__Loading CSV file in sheets__
+```{r, echo=TRUE}
+orders <- read_xls("data/Superstore-2021.xls", sheet = "Orders")
+returns <- read_xls("data/Superstore-2021.xls", sheet = "Returns")
+```
+
+_Join code_
+```{r}
+joined_tab <- left_join(returns,orders)
+                        by = c("Order ID" = 'Order ID')
+```
+
+_group by_
+```{r}
+FC_tab <- joined_tab %>%
+  group_by(`Sub-Category`) %>%
+  summarise('Returns' = n()) %>%
+  ungroup()
+```
+_count method_
+```{r}
+freq_returned <- joined_tab %>%
+    count(`Sub-Category`) %>%
+    rename(Returns = n)
+```
+
+```{r}
+freq_sorted <- freq_returned %>%
+    arrange(desc(Returns))
+```
+
+```{r}
+freq_cum <- freq_sorted %>%
+  mutate(cumfreq = cumsum(Returns))
+```
+
+```{r}
+freq_final <- freq_cum %>%
+  mutate(cumpct = 100 * cumfreq/sum(Returns))
+```
+
+```{r}
+scaleRight <- tail(freq_final$cumpct, n=1)/head(freq_final$Returns, n=1)
+```
+
+
+```{r}
+ggplot(freq_final,aes(x = reorder(`Sub-Category`,-Returns))) +
+  geom_bar(aes(y = Returns), stat = "identity")+
+  labs(title = "Pareto Chart", x = "Sub-Category") +
+  geom_path(aes(y=cumpct/scaleRight, group=1),colour="red", size=0.9) +
+  geom_point(aes(y=cumpct/scaleRight, group=1),colour="red") +
+  scale_y_continuous(name = "Return Count", sec.axis = sec_axis(~.*scaleRight, name = "Cumulative (%)")) +
+  theme(text = element_text(size=10),
+        axis.text.x = element_text(angle=90, hjust=1))
+```
+
