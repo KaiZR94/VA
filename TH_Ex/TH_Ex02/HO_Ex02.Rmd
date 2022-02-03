@@ -1,0 +1,170 @@
+---
+title: "Hands-On Exercise 2"
+description: |
+  Hands-On exercise to practice ggiraph, plotlyr and gganimate
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+
+__Installing and running the packages__
+```{r}
+packages = c('tidyverse','readxl','ggiraph','plotly','gganimate','DT','patchwork','gifski','gapminder')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+
+_Loading the CSV file_
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+_plot_
+```{r}
+p <- ggplot(data = exam_data,
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(tooltip = ID) ,
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  scale_y_continuous(NULL,
+                     breaks = NULL)
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.618
+)                     
+```
+
+__plot with class dataid and patchwork for linking w eng graph__
+
+```{r}
+p1 <- ggplot(data = exam_data,
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(data_id = CLASS,
+        tooltip = ID),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  coord_cartesian(xlim=c(0,100)) +
+  scale_y_continuous(NULL,
+                     breaks = NULL)
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.618,
+  options = list(
+    opts_hover(css = "fill: #202020;"),
+    opts_hover_inv(css = "opacity: 0.2;")
+  )
+)                     
+```
+
+__english graph__
+```{r}
+p2 <- ggplot(data = exam_data,
+       aes(x = ENGLISH)) +
+  geom_dotplot_interactive(
+    aes(data_id = CLASS,
+        tooltip = ID),
+    stackgroups = TRUE,
+    binwidth = 1,
+    method = "histodot") +
+  coord_cartesian(xlim=c(0,100)) +
+  scale_y_continuous(NULL,
+                     breaks = NULL)
+girafe(code = print(p1 / p2),
+  width_svg = 6,
+  height_svg = 6*0.618,
+  options = list(
+    opts_hover(css = "fill: #202020;"),
+    opts_hover_inv(css = "opacity: 0.2;")
+  )
+)                     
+```
+
+__plotly scatter plot__
+```{r}
+plot_ly(data = exam_data,
+        x = ~MATHS,
+        y = ~ENGLISH,
+        color = ~RACE,
+        colors = "Set1")
+```
+
+_creating a palette_
+
+```{r}
+pal <- c("red","blue","purple","green")
+
+plot_ly(data = exam_data,
+        x = ~MATHS,
+        y = ~ENGLISH,
+        text = ~paste("Student ID:", ID,
+                      "<br>Class:", CLASS,
+                      "<br>Race:", RACE),
+        color = ~RACE,
+        colors = pal) %>%
+  layout(title = "English Score vs Math Score",
+         xaxis = list(c(0,100)),
+         yaxis = list(c(0,100)))
+```
+
+_using ggplotly_
+
+```{r}
+d <- highlight_key(exam_data)
+p1 <- ggplot(data = d,
+             aes( x = MATHS, y = ENGLISH)) +
+  geom_point(dotsize = 1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim = c(0,100))
+p2 <- ggplot(data = d,
+             aes(x = MATHS,y = SCIENCE)) +
+  geom_point(dotsize = 1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim = c(0,100))
+subplot(ggplotly(p1),
+        ggplotly(p2))
+```
+
+_interactive data table_
+```{r}
+DT::datatable(exam_data)
+```
+
+_linked brushing cross talk_
+```{r}
+d <- highlight_key(exam_data)
+p <- ggplot(data = d,
+             aes( x = MATHS, y = ENGLISH)) +
+  geom_point(dotsize = 1) +
+  coord_cartesian(xlim = c(0,100),
+                  ylim = c(0,100))
+gg <- highlight(ggplotly(p),
+                "plotly_selected")
+crosstalk::bscols(gg,
+                  DT::datatable(d),
+                  width = 5)
+```
