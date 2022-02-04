@@ -1,7 +1,9 @@
 ---
-title: "Take-Home Exercise 2"
+title: "Take-Home Exercise 02"
 description: |
-  2nd take-home exercise for ISS608, to create an animated age-sex pyramid to show the changes in Singapore demographics from 2000 to 2020. Additionally, we have also created an interactive subplot which allows us to compare the pyramids of 2 planning areas in the same year.
+  The 2nd take-home exercise for ISS608, this time we aim to build upon the population pyramid built in Take-Home Exercise 01.| 
+  I have created 2 seperate pyramid-based visualizations, one static visualization that allows for comparison of 2 pyramids, each of a different planning area. 
+  The other visualization is a GIF that shows changes in the pyramid over time. 
 author:
   - name: Tan Jit Kai
     url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
@@ -19,9 +21,17 @@ knitr::opts_chunk$set(echo = TRUE,
                      fig.retina = 3)
 ```
 
+__Exercise Task and Goals__
+1. Breakdown the demographic data into Planning Areas.
+2. Apply appropiate animation or interactivity methods to the population pyramid visualization.
+
+
 __Installing and running the packages__
+
+For this exercise, we will require additional packages that will allow us to implement animation and interaction techniques. The code chunk below is for the loading of required packages.
+
 ```{r}
-packages = c('tidyverse','readxl','ggiraph','plotly','gganimate','DT','patchwork','gifski','gapminder','lemon')
+packages = c('tidyverse','readxl','ggiraph','plotly','gganimate','DT','patchwork','gifski','gapminder','lemon', 'dplyr')
 
 for(p in packages){library
   if(!require(p, character.only = T)){
@@ -32,21 +42,29 @@ for(p in packages){library
 ```
 
 _Read CSV_
+
+For this exercise, we will be using data for Singapore's demographic breakdown by planning area from 2000 to 2020. The base csv files were obtained from Singapore's [Department of Statistics](https://www.singstat.gov.sg/) and are extracted into 2 data tables
+
 ```{r}
 demo1 <- read_csv('data/respopagesextod2000to2010.csv')
 demo2 <- read_csv('data/respopagesextod2011to2020.csv')
 ```
 
-For this exercise, we will be combining Singapore's demographic data from 2000 to 2020 into 1 data frame in order to show changes over time.
+__Data Cleaning and Manipulation__
 
-_Combining the datatables_
+After reading the csv files, we will now proceed to do data cleaning and manipulation into the required form for our visualization
+
+_1. Combining the datatables_
+
+first we combine the 2 datatables together into 1.
+
 ```{r}
 joined_demo <- rbind(demo1, demo2)
 ```
 
-_Aggregating the data_
+_2. Aggregating the data_
 
-As we are required to show the population pyramid by Plannining Area and accross time, for our aggregation, we will include the Time and PA columns to the basic AG and Sex columns.
+As we are required to show the population pyramid by Planning Area and changes across time, for our aggregation, we will include the Time and PA columns into our group_by function unlike in Take-Home Exercise 1.
 
 ```{r}
 agg_pop <- joined_demo %>%
@@ -55,13 +73,17 @@ agg_pop <- joined_demo %>%
   ungroup()
 ```
 
+_3. Necessary edits for visualization_
+
 Then we will be changing all age groups to double digits in order to ensure that they are arranged properly in the visualization
+
 
 ```{r}
 agg_pop$AG[agg_pop$AG=="5_to_9"] <- "05_to_09"
 agg_pop$AG[agg_pop$AG=="0_to_4"] <- "00_to_04"
 ```
-Finally, we will convert all Pop values of male to negative so that they will appear on the left side of the pyramid.
+
+Finally, we will convert all Pop values of male to negative so that they will appear on the left side of the pyramid(s).
 
 ```{r}
 agg_pop$Pop <- ifelse(agg_pop$Sex == "Males",-1*agg_pop$Pop,agg_pop$Pop)
@@ -75,15 +97,15 @@ apply(agg_pop, 2, function(x) any(is.na(x)))
 
 __Creating the Visualization__
 
-_Changes over time_
-As there are multiple planning areas in Singapore, we will create a function which can create an animated population pyramid for us just by entering the correct planning area.
+_1. Changes to Planning Area Demographics over 20 years_
+As there are multiple planning areas in Singapore, we will create a function which can create an animated population pyramid for us when we enter the correct planning area.
 
 In the code chunk shown below, the code lines up to 'coord_flip()' is for the creation of the basic pyramid. The 'transition_time' function will make the visualization cycle through the Population values according to the column 'Time'.
 
 Finally the last line of code is to animate the visualization using 'gifski_renderer' to create a gif that lasts 10 seconds.
 
 ```{r}
-create_plot <- function(PAselect){
+create_gif <- function(PAselect){
   
   filter_pop <- filter(agg_pop, PA == PAselect)
 P <- ggplot(filter_pop, aes (x = AG, y = Pop/1000, fill = Sex)) +
@@ -101,17 +123,27 @@ animate(P,fps = 24,duration = 10, renderer = gifski_renderer())
 }
 ```
 
-A sample of this visualization is created for the Hougang planning area as shown below
+To know which is the planning areas listed in the data, a new table has been created with just the list of planning areas.
+
+```{r}
+planning_areas <- agg_pop %>%
+  distinct(agg_pop$PA)
+colnames(planning_areas) <- c("Planning Area")
+head(planning_areas,10)
+```
+
+A gif sample of the visualization function is created for the Hougang planning area as shown below
 
 
 ```{r}
-create_plot("Hougang")
+create_gif("Bishan")
 ```
 
-_Comparing 2 areas_
+_2. Visualization to comparing population pyyramids of 2 planning areas_
 
 Next we will use plotly to create a diagram that will allow us to compare the pyramids for 2 different planning areas in the same year.
-For this example, we will comparing Ang Mo Kio and Hougang in the Year 2010
+
+First we will create 2 temporary data tables filtered according to the entered information, with 1 data table for each Planning Area. Following that we will combine them into the subplot under P and make the necessary labelling adjustments before completing the function with return(P)
 
 ```{r}
 
@@ -129,18 +161,29 @@ P2 <- ggplot(filter_pop2, aes(x = Pop, y = AG, fill = Sex)) +
   geom_col()+
   scale_x_symmetric(labels = abs)
    
-P <- subplot(ggplotly(P1) %>% layout(annotations = list(x = 0.4 , y = 1.05, text = PA1, showarrow = F, 
+P <- subplot(ggplotly(P1) %>% layout(annotations = list(x = 0.025 , y = 1.05, text = PA1, font = list(size = 12), showarrow = F, 
 xref='paper', yref='paper'), 
      showlegend = FALSE),
-             ggplotly(P2), nrows = 1, margin = 0.1) %>% layout(annotations = list(x = 0.9 , y = 1.05, text = PA2, showarrow = F, 
+             ggplotly(P2) %>% 
+  layout(annotations = list(x = 0.975 , y = 1.05, text = PA2,font = list(size = 12), showarrow = F, 
 xref='paper', yref='paper'), 
-     showlegend = TRUE) 
+     showlegend = TRUE), nrows = 1, margin = 0.1, shareY = TRUE, titleX = TRUE)
 
-P <- P %>% layout(title = 'Population Pyramids Comparison', xaxis = list(title = "Population Count"),yaxis = list(title = "Age Group"))
+P <- P %>% 
+  layout(title = list(text = '<b>Population Pyramids Comparison</b>', x = 0.5, y = 5 , font = list(size = 15)),yaxis = list(title = "Age Group"))
 
 return(P)
 }
+```
 
 
+For this example, we will comparing Ang Mo Kio and Hougang in the Year 2010
+
+```{r}
 create_plot("Ang Mo Kio","Hougang", "2010")
 ```
+
+
+__Conclusion__
+
+There are more interactive techniques that can be performed such as creating a dashboard and shiny to allow for checkbox selection of variables to be displayed and these 2 only serve as some of the most basic of visualization enhancements that can be performed.
