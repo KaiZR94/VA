@@ -151,13 +151,17 @@ create_plot <- function(PA1, PA2, Year){
   d <- highlight(agg_pop)
   filter_pop1 <- filter(d, PA == PA1, Time == Year)
   filter_pop2 <- filter(d, PA == PA2, Time == Year)
-   
-P1 <- ggplot(filter_pop1, aes(x = Pop, y = AG, fill = Sex)) +
+
+information <- paste0("\nSex:",d$Sex,
+               "\nAge Group:",d$AG,
+               "\nYear:",d$Time)  
+     
+P1 <- ggplot(filter_pop1, aes(x = Pop, y = AG, fill = Sex,label = information)) +
   geom_col()+
   scale_x_symmetric(labels = abs)
    
 
-P2 <- ggplot(filter_pop2, aes(x = Pop, y = AG, fill = Sex)) +
+P2 <- ggplot(filter_pop2, aes(x = Pop, y = AG, fill = Sex, label = information)) +
   geom_col()+
   scale_x_symmetric(labels = abs)
    
