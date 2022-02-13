@@ -148,27 +148,27 @@ First we will create 2 temporary data tables filtered according to the entered i
 ```{r}
 
 create_plot <- function(PA1, PA2, Year){
-  d <- highlight(agg_pop)
-  filter_pop1 <- filter(d, PA == PA1, Time == Year)
-  filter_pop2 <- filter(d, PA == PA2, Time == Year)
+  
+  filter_pop1 <- filter(agg_pop, PA == PA1, Time == Year)
+  filter_pop2 <- filter(agg_pop, PA == PA2, Time == Year)
 
-information <- paste0("\nSex:",d$Sex,
-               "\nAge Group:",d$AG,
-               "\nYear:",d$Time)  
+information <- paste0("\nSex:",agg_pop$Sex,
+               "\nAge Group:",agg_pop$AG,
+               "\nCount:",agg_pop$Pop)  
      
-P1 <- ggplot(filter_pop1, aes(x = Pop, y = AG, fill = Sex,label = information)) +
+P1 <- ggplot(agg_pop, aes(x = Pop, y = AG, fill = Sex,label = information)) +
   geom_col()+
   scale_x_symmetric(labels = abs)
    
 
-P2 <- ggplot(filter_pop2, aes(x = Pop, y = AG, fill = Sex, label = information)) +
+P2 <- ggplot(agg_pop, aes(x = Pop, y = AG, fill = Sex, label = information)) +
   geom_col()+
   scale_x_symmetric(labels = abs)
    
-P <- subplot(ggplotly(P1) %>% layout(annotations = list(x = 0.025 , y = 1.05, text = PA1, font = list(size = 12), showarrow = F, 
+P <- subplot(ggplotly(P1, tooltip = c("label")) %>% layout(annotations = list(x = 0.025 , y = 1.05, text = PA1, font = list(size = 12), showarrow = F, 
 xref='paper', yref='paper'), 
      showlegend = FALSE),
-             ggplotly(P2) %>% 
+             ggplotly(P2,tooltip = c("label")) %>% 
   layout(annotations = list(x = 0.975 , y = 1.05, text = PA2,font = list(size = 12), showarrow = F, 
 xref='paper', yref='paper'), 
      showlegend = TRUE), nrows = 1, margin = 0.1, shareY = TRUE, titleX = TRUE)
