@@ -30,7 +30,9 @@ for(p in packages){library
 ```
 
 
-For this DataViz Makeover, i am using data from the [Ministry of Manpower's Research and Statistics Department](https://stats.mom.gov.sg/Pages/LabourForceTimeSeries.aspx). The data set chosen contains data regarding Singapore's Resident Labour Force Participation Rate (LFPR) by Age and Sex.
+For this DataViz Makeover, I am using data from the [Ministry of Manpower's Research and Statistics Department](https://stats.mom.gov.sg/Pages/LabourForceTimeSeries.aspx). 
+
+The data set chosen contains data regarding Singapore's Resident Labour Force Participation Rate (LFPR) by Age and Sex.
 
 ___Section 1: Critique of Visualization___
 
