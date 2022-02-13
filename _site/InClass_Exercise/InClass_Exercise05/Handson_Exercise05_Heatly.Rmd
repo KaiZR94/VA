@@ -1,0 +1,66 @@
+---
+title: "Hands-On Exercise 5"
+description: |
+  Hands-On exercise for multi-variate analysis
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+
+```{r}
+packages = c('seriation', 'dendextend', 'heatmaply', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+}
+```
+
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+```
+
+```{r}
+row.names(wh) <- wh$Country
+```
+
+```{r}
+wh1 <- dplyr::select(wh, c(3, 7:12))
+wh_matrix <- data.matrix(wh)
+```
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix,
+                      Rowv=NA, Colv=NA)
+```
+
+
+```{r}
+wh_heatmap <- heatmap(wh_matrix)
+```
+```{r}
+wh_heatmap <- heatmap(wh_matrix,
+                      scale="column",
+                      cexRow = 0.6, 
+                      cexCol = 0.8,
+                      margins = c(10, 4))
+```
+
+Heatmaply
+
+```{r}
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
+```
+

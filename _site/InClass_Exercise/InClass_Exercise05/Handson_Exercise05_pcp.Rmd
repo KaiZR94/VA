@@ -1,0 +1,73 @@
+---
+title: "Hands-On Exercise 5"
+description: |
+  Hands-On exercise for multi-variate analysis
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+
+```{r}
+packages = c('GGally', 'plotly', 'parcoords', 'parallelPlot', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+}
+```
+
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+```
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax", 
+           boxplot = TRUE, 
+           title = "Parallel Coord. Plot of World Happines Attributes") +
+  facet_wrap(~ Region)
+```
+
+
+
+
+
+Editing base plots
+```{r}
+parcoords(wh[,7:12],
+          rownames = FALSE,
+ reorderable = T,
+ brushMode = '1D-axes',
+ width = 700,
+ height = 400)
+```
+
+Brushing to make unwanted viosualization disappear]
+alpha and alpha on brush is to allow for selection of which to highlight.
+It works by plotting a 2nd graph on top of the selected lines to make it darker
+
+```{r}
+parcoords(
+ wh[,7:12],
+ rownames = FALSE,
+ alpha = 0.3,
+ alphaOnBrushed = 0.2,
+ reorderable = T,
+ brushMode = '1D-axes',
+ width = 700,
+ height = 400)
+```

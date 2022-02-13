@@ -1,0 +1,159 @@
+---
+title: "Hands-On Exercise 4"
+description: |
+  Hands-On exercise to practice ggstatsplot and visualize uncertainty
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+
+```{r}
+packages = c('ggstatsplot', 'tidyverse', 'ggside','ggdist','PMCMRplus','readxl','see','performance','parameters','report')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+}
+```
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+gghistostats
+set.seed is used to ensure that when simulations are run when type = robust or bayes, the result is always the same
+
+```{r}
+set.seed(1234)
+
+gghistostats(
+  data = exam_data,
+  x = ENGLISH,
+  test.value = 60,
+  xlab = 'English Scores'
+)
+```
+
+two-sample mean tests:ggbetweenstats() , type = parametric or null
+```{r}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER,
+  y = MATHS,
+
+  messages = FALSE
+)
+```
+
+One-way ANOVA Test (type => "np" or "non-parametric)
+
+```{r}
+ggbetweenstats(
+  data = exam_data,
+  x = RACE,
+  y = ENGLISH,
+  type = "np",
+  mean.ci = TRUE,
+  pairwise.comparisons = TRUE,
+  pairwise.display = "all",
+  p.adjust.methods = "fdr",
+  messages = FALSE
+)
+```
+
+```{r}
+pairwise_comparisons(data = exam_data,
+                     x = RACE,
+                     y = ENGLISH,
+                     type = "np")
+```
+
+Significant TEst of Correlation =>ggscatterstats()
+```{r}
+ggscatterstats(
+  exam_data,
+  MATHS,
+  ENGLISH,
+  marginal=TRUE
+)
+```
+
+
+Significant Test of Association (Dependance) => ggbarstats()
+```{r}
+
+exam01 <- exam_data %>%
+  mutate(MATHS_bins = 
+           cut(MATHS,
+               breaks = c(0, 60, 75, 85,100)))
+
+ggbarstats(
+  exam01,
+  x = MATHS_bins,
+  y = GENDER
+)
+```
+
+
+Toyota Corolla
+
+```{r}
+car_resale <- read_xls("data/ToyotaCorolla.xls",
+                       "data")
+```
+
+creating model
+
+```{r}
+model1 <- lm(Price ~ Age_08_04 + Mfg_Year + KM + Weight + Guarantee_Period, data = car_resale)
+```
+
+check for multi colinearity
+```{r}
+check_c <- check_collinearity(model1)
+```
+
+```{r}
+plot(check_c)
+```
+
+Normality Check
+
+```{r}
+check_n <- check_normality(model1)
+```
+
+```{r}
+check_h <- check_heteroscedasticity(model1)
+```
+
+check model
+
+```{r}
+check_model(model1)
+```
+
+plot
+
+```{r}
+plot(parameters(model1))
+
+```
+
+
+```{r}
+ggcoefstats(model1,
+            output = "plot")
+```

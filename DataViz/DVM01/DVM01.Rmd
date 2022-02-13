@@ -4,7 +4,7 @@ description: |
   First Data Visualization Makeover Exercise for Visual Analytics 21/22 Term 2
   
   
-  Tableau Public link: [DataViz Makeover 01: Changes in Singapore's Labour Force Participation Rate from 2010 to 2021](https://public.tableau.com/app/profile/jk.tan/viz/DataVizMakeover01ChangesinSingaporesLabourForceParticipationRatefrom2010to2021/Dashboard1)
+  Tableau Public link: [DataViz Makeover 01: Changes in Singapore's Labour Force Participation Rate from 2010 to 2021](https://public.tableau.com/app/profile/jk.tan/viz/DataVizMakeover01_JK/DataVizMakeover01)
 author:
   - name: Tan Jit Kai
     url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
@@ -36,6 +36,7 @@ ___Section 1: Critique of Visualization___
 
 Before I introduce my own visualization, I will first critique the following visualization as part of the assignment.
 
+
 ```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
 knitr::include_graphics("img/OG.png")  
 ```
@@ -44,22 +45,27 @@ Figure 1: Original Visualization provided
 Note: Labour Force Participation Rate (LFPR) refers to the percentage the population of legal working-age that are actively engaged in the labour market, either currently employed or seeking employment.
 
 Assumptions: This visualization is trying to show the changes in Labour Force Participation Rate for each age-group over time (years).
+
 __Clarity Critiques__
 
 _Critic 1: X-axis labelled wrongly_
+
 As shown in the diagram, the X-axis is based on 2 factors, Age-group and Year. We can see that all of the Year label for every age-group is 2015 and this will only serve lead readers to the wrong conclusions.
 Because the diagram shows changes in the area graph, having only the year 2015 shown on the X-axis will lead to the assumption that the changes represent different ages in that Age-group in the year 2015. 
 We know that this is not true since the data provided rate for each age-group instead of individual year, but most people do not.
 Instead, the label should contain a range of the years contained within that graph, for example "2015 - 2021".
 
 _Critic 2: Clashing Age-group_
+
 Looking at the diagram, we can see that there are 3 age-groups that deal with workers in their 70s. They are: "70 to 74", "75 & Over" and "70 & Over". As the group "70 & over" is actually the combined result of both "70 to 74" and "75 & Over", it is redundant and the diagram would be better served using either "70 to 74" and "75 & Over" or just "70 & Over".
 
 _Critic 3: Y-axis labelled in Short Form_
+
 The Y-axis is labelled as "Lfpr" instead of the full "Labour Force Participation Rate" and it does not show the units involved which is %. As the diagram also does not explain what LFPR is, readers not in the know will be confused as to what it represents.
 The Y'axis should be labelled as "Labour Force Participation Rate (%)" instead.
 
 _Critic 4: No explanation to diagram purpose_
+
 The visualization only comprises of the diagram and it's title which does not fully explain what the diagram represents nor what observers should be expecting to understand by looking at it.
 
 Instead, the title should be a brief explaintaion of what the observer should expect to see, there should also be a small subtitle or commentary on the visualization.
@@ -81,6 +87,8 @@ There are no points labelled in the diagram that observers can use for reference
 The diagram should have at least 2 points shown from each age-group so that observers can infer the change over time or indicated the percentage change itself in a label.
 
 ___Proposed Design___
+
+
 ```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
 knitr::include_graphics("img/draft1.jpg")  
 ```
@@ -91,6 +99,7 @@ __Advantages__
 1) Visualization Title and Commentaries: Show how the LFPR has changed between 2010 and 2021. Also provides insights on more notable aspects like which groups are experiencing greater change.
 2) Chart Titles and Commentary: Provides explainations and context into what the charts try to show.
 3) Chart 1: Clearer comparisons of change since each age-group line is stretched out more. Wider range age-groups are selected in order to give a clearer view instead of cluttering the graph.
+
 4) Chart 2: Provides new insights into the LFPR change by gender, allowing observers to see and compare the rate of change for males and females
 5) Period of comparison: Both charts are to use 2010 and 2021 as the two selected points of comparison so that observers are able to see the overall change within the span of 10 years clearly. Values are also directly indicated so that straight comparisons can be made.
 
@@ -99,5 +108,337 @@ ___Section 3: Data Preparation___
 
 For my proposed visualization, I will only be using one table from the data set obtained.
 
+This is because i am trying to minimize the number of age-groups included in the visualization so I want to use wider age-groups which are provided in that table instead of Table 2 which was used in the Visualization critiqued.
+
+However, I will still be editing both tables in case i will need to use them in the future for other purposes.
+
 Table: __mrsd_Res_LFPR_1__
 
+__Part 1: Editing the Excel file__
+
+Before importing into Tableau, i first open the excel file to see if any edits need to be made there directly and in this case, there were 5 changes
+
+_Change #1: Adding Gender Column_
+
+The data set did not have a specific column for gender, instead, it segreated the genders by row groupings. I added a gender column and assigned the correct values to each row according to the original grouping.
+
+_Change #2: Editing the Age Group column_
+
+Since a new gender column has been created, I renamed the rows with gender to "Combined" since those rows contained the data for all age-groups under that gender  and changed the name of the column to reflect what that column showed.
+
+Results of change #1 & #2 should be as shown below.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Excel Edit 1.jpg")  
+```
+Figure 3: Phase 1 excel edits
+
+_Change #3: Remove 1991 - 2009 columns_
+
+As we will only be using the data from 2010 to 2021, I deleted the unnecessary columns.
+
+_Change #4: Remove empty rows, title_
+
+Empty rows speerating the gender groups and all miscellaneous rows including title were removed.
+
+_Change #5: Change tab and file names_
+
+Rename 'mrsd_Res_LFPR_2’ to ‘Table 1’ and ‘mrsd_Res_LFPR_1’ to Table 2 and save the file as 'LFPR Base'
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Excel Edit 2.jpg")  
+```
+Figure 4: Finalised Excel file.
+
+__Part 2: Tableau Data Manipulation__
+
+_Step 1. Import into Tableau and create flat file_
+
+Import 'LFPR Base' into Tableau and use their automatic Data Interpreter function to establish the correct column headers for both data sheets. Then drag ‘Table 2’ to the right side to set it up.
+
+As we want to create a flat file in order to create our visualizations, we will select the year columns from 2010 to 2021, right click and use the Pivot function.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Tableau Edit 1.jpg")  
+```
+Figure 5: Pivot the highlighted columns
+
+_Step 2: Rename Pivot columns_
+
+Rename the ‘Pivot Field Names’ column to ‘YEAR (Year)’ and ‘Pivot Field Values’ column to ‘LFPR (%)’.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/edit pivot name.jpg")  
+```
+Figure 6: Rename pivot columns
+
+
+_Step 3: Change data type for Year column_
+
+
+Change the data type for the ‘YEAR (Year)’ column from string to date.
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/change year data type.jpg")  
+```
+Figure 7: Change data type for Year column
+
+___Section 4: Creating the Visualization___
+
+__Chart 1: Change in Labour Force Participation Rate (%) over Time__
+
+_Step 1: Create Line Chart_
+
+Drag [YEAR] to columns and [LFPR (%)] to rows.
+Change 'Automatic' to Line in the Marks section
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step1.jpg")  
+```
+Figure 8: Base Line Chart created
+
+_Step 2: Filters_
+
+Drag [Age Band] to the Filter box and filter by the following selections.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step2.jpg")  
+```
+Figure 9: Filter Age Band
+
+Drag [Sex] to Filter and select ‘Both’
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step3.jpg")  
+```
+Figure 10: Filter Sex
+
+_Step 3: Colours_
+
+Drag [Age Band] to ‘Color’ square.
+Right click the ‘Color’ square and assign the colors according to the image below.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step4.jpg")  
+```
+Figure 11: Choosing colours for lines
+
+_Step 4: Adding Annotations_
+
+As we will be focusing on 2 particular years (2010 and 2021), first select the columns corresponding to those years on the graph. 
+For the points at the side:
+Right click the lines again and select ‘Annote’ and ‘Point’. It will bring up the below box where we will enter the following code.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step5.jpg")  
+```
+Figure 12: Annotate points for 2010 and 2021
+
+For the points in the middle, enter the change in that line between 2021 and 2010, for e.g. for the Combined Group ‘+ 5.1 %’.
+
+There are a total of 15 points that need to be done for this diagram.
+After creating the annotation, left click on the number to format it according to the image below.
+Essentially, everything should be ‘None’.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step6.jpg")  
+```
+Step 13: Annotation format
+
+_Step 5: Hide field label for column_
+
+Right click the YEAR (Year) on the top of the chart and hide it.
+
+_Step 6: Editing the Y-axis_
+
+Right-click on the Y-axis and select ‘Edit Axis’ and change the title to ‘Labour Force Participation Rate (%)’.
+Change the Range to ‘Fixed’ from 0 to 100.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step7.jpg")  
+```
+Figure 14: Editing Y-axis
+
+_Step 7: Add the following title_
+
+Increase in percentage of Singaporeans working across all age groups since 2010 <font size 14> <bold> <underline>
+Largest increase comes from the more senior workers belonging to the two age groups: 55 to 64 years old (+9.06%) , 65 years old and above (+14.88%) <font size 10>
+
+
+_Chart 1 Completed!_
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Final.jpg")  
+```
+Figure 15: Completed Line Graph
+
+
+__Chart 2: Male Vs Female Change over time__
+
+_Step 1: Creating the Bar Chart_
+
+Drag the following tables to columns in this order from left to right: 
+[Age Band] [YEAR (Year)] [Sex]
+Drag [LFPR (%)] to rows.
+Select ‘Bar’ for chart type in the Marks box.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/C2S1.jpg")  
+```
+Figure 16: Creating Bar Chart
+
+_Step 2: Filters and Colours_
+
+Drag [YEAR (Year)] to Filters and choose Years for filter field.
+Check only 2010 and 2021.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/C2S2.jpg")  
+```
+Figure 17: Filter for Years
+
+Drag [Sex] to Filters and check only the ‘Male’ and ‘Female’ options
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/C2S3.jpg")  
+```
+Figure 18: Filter for Sex
+
+Drag [Age Band] to the Filter box and filter by the following selections.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart1_Step2.jpg")  
+```
+Figure 19: Filter Age Band
+
+Drag [Sex] to the ‘Color’ box, then left click the box again to edit the colours and choose these 2 colours as shown below.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/C2S4.jpg")  
+```
+Figure 20: Color selection for Chart 2
+
+_Step 3: Adding Annotation_
+
+Click and drag to select all the bars, then select ‘Mark Labels’ and ‘Always Show’.
+
+_Step 4: Hide Field Label for Column_
+
+Right click the YEAR (Year) on the top of the chart and hide it.
+
+_Step 5: Editing the Axis_
+
+Right-click on the Y-axis and select ‘Edit Axis’ and change the title to ‘Labour Force Participation Rate (%)’.
+Ensure that the range is ‘Automatic’.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/C2S5.jpg")  
+```
+Figure 21: Editing Y-axis and show label
+
+_Step 6: Add the following title_
+
+Women had greater increase in labour force participation rate compared to men between 2010 to 2021 <fontsize 14><bold><underline>
+From 2010 to 2021, women saw a combined increase of 7.7% compared to the 0.7% increase for men. This is also reflected in the individual age groups <font size 11>
+
+_Chart 2 Completed!_
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/Chart2Final.jpg")  
+```
+Figure 22: Completed Chart 2
+
+__Dashboard Creation__
+
+_Step 1: Add title_
+
+Changes in Singapore’s labour force participation rate by age bands and gender, 2010 to 2021.
+<fontsize 24> <white>
+Format the dashboard title as shown in the figure below using the panel on the left.
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '60%', results = 'markup'} 
+knitr::include_graphics("img/C2S7.jpg")  
+```
+Figure 23: Format dashboard title
+
+_Step 2: Add commentary_
+
+Select ‘Text’ in the Objects area under the Dashboard panel and drag it to under the title.
+Enter the following:
+
+“There has an overall increase in labour force participation rate (LFPR) across all age groups from 2010 to 2021 with a more significant increase in participation rate for more senior residents (55 - 64, 65 +) . This difference can be due to many reasons, but main possible reasons are the aging population in Singapore and the Government working to encourage re-employment of older workers.
+Additionally, the increase in LFPR is also greater for women than for men, indicating that more women are joining the workforce and staying committed to their careers. This large increase for women could possibly be due to the establishment of more flexible work arrangements so that women can care for their family and continue to work."
+
+_Step 3: Add sheets_
+
+Add “LFPR (%) Change” to the left and “MVFChange” to the right. Place the legends for both charts under their respective charts.
+
+_Step 4: Add source_
+
+Select Objects > Text, drag it to the bottom left and add:
+“.Source: Ministry of Manpower Singare (https://www.mom.gov.sg)
+Raw data set: https://stats.mom.gov.sg/Pages/LabourForceTimeSeries.aspx”
+Align it to the left.
+
+_Step 5: Add author_
+
+Add text to bottom right corner and add text: “DataViz Makeover #1 by Tan Jit Kai” and align right.
+
+___Section 4: Final Visualization___
+
+__Snapshot of Dashboard__
+
+
+```{r, echo = FALSE, fig.align = 'center', out.width = '100%', results = 'markup'} 
+knitr::include_graphics("img/dashboard_final.jpg")  
+```
+Figure 24: Completed Dash Board
+
+
+__Observations__
+
+_Observation 1:_
+
+Labour Force Participation Rate (LFPR) has increased across all the age bands since 2010.
+The largest increases came from the age-groups with older workers (55 to 64 [+9.06%] and 65 & Over [+14.88%]). 
+
+The rate of increase for the other age groups were more stable, hovering around around 5%.
+
+Many will attribute this to aging population but a more direct cause might be the Government's increased efforts to promote re-employment and fair hiring practicesfor senior workers which encourage companies to not discriminate against older workers and to take advantage of their longer experience.
+
+_Observation 2:_
+
+The youngest age-band (15 to 24) was the most unstable with an increase halfway through the 2010s to 40.6% in 2015 before declining to a low of 36% in 2020. It then rises again in 2021 to 42.77%.
+
+This is also the only age-band where in 2021, the LFPR of females was higher than males.
+Given that males in this age-group are expected to serve 2 year of National Service which is not included in the LFPR, this result is not a surprise. Even in 2010, the LFPR for both males and females in this age group is much closer (3.2% difference) compared to the other age groups
+
+_Observation 3:_
+
+Increase in LFPR for females was larger than males across all age groups with a combined increase of 7.7% in LFPR for females from 2010 to 2021 compared to 0.7% for men over the same period.
+
+This greater increase for women might be due to more flexible work arrangements being made for women in the workforce so that they are able to work and act as the primary caretaker for their children or the increase in spending power which allows for more families to hire helpers instead. 
+
+As women were traditionally the parent to care for their children, this has allowed more women to commit themselves to their careers which resulted in the higher change in LFPR since men were less affected by this.
+
+The largest increase for both genders can be found in the more older groups as expected.
+However, in the oldest age-group for 65 & over, Men see a larger increase of 15.5% compared to 14.2% for women.

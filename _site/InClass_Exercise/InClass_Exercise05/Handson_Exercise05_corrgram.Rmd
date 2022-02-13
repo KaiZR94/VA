@@ -1,0 +1,124 @@
+---
+title: "Hands-On Exercise 5"
+description: |
+  Hands-On exercise for multi-variate analysis
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+
+```{r}
+packages = c('ggstatsplot', 'tidyverse', 'corrplot','ggcorrplot')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+}
+```
+
+```{r}
+wine <- read_csv("data/wine_quality.csv")
+```
+
+```{r}
+pairs(wine[,2:12], upper.panel = NULL )
+```
+```{r}
+panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
+usr <- par("usr")
+on.exit(par(usr))
+par(usr = c(0, 1, 0, 1))
+r <- abs(cor(x, y, use="complete.obs"))
+txt <- format(c(r, 0.123456789), digits=digits)[1]
+txt <- paste(prefix, txt, sep="")
+if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+}
+
+pairs(wine[,2:12], 
+      upper.panel = panel.cor)
+```
+
+Create correlation plot
+Default statistical method: Pearsons
+
+```{r}
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11,
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for wine dataset",
+  subtitle = "Four pairs are no significant at p < 0.05"
+)
+```
+
+Corrplot
+
+```{r}
+wine.cor <- cor(wine[, 2:11])
+```
+
+```{r}
+corrplot(wine.cor)
+```
+
+```{r}
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+Corrplot w sig test
+
+```{r}
+wine.sig = cor.mtest(wine.cor, conf.level= .95)
+corrplot(wine.cor,
+         method = "number",
+         type = "lower",
+         diag = FALSE,
+         tl.col = "black",
+         tl.srt = 45,
+         p.mat = wine.sig$p,
+         sig.level = .05)
+```
+
+Corrplot allows us to reorder the arguements to change the visualization
+
+Method 1: Order
+```{r}
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               order="AOE",
+               tl.col = "black")
+```
+Hierachical Clustering
+addrect is for the number of clusters
+```{r}
+corrplot(wine.cor, 
+         method = "ellipse", 
+         tl.pos = "lt",
+         tl.col = "black",
+         order="hclust",
+         hclust.method = "ward.D",
+         addrect = 3)
+```
