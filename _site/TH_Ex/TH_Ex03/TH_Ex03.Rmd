@@ -1,0 +1,180 @@
+---
+title: "Take Home Exercise 03"
+description: |
+  3rd Take Home exercise where I produce visualization of basic statistics using R
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: 
+ distill::distill_article:
+   toc: TRUE
+   toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+# Task
+
+For this exercise, we are tasked to apply appropiate data visualization technique to accomplish the following goal:
+
+"Create a data visualisation showing average rating and proportion of cocoa percent (% chocolate) greater than or equal to 70% by top 15 company location. For the purpose of this task, chocolate.csv should be used."
+
+# Data Preperation
+
+## Loading of Required Packages
+
+Before anything, we will first install the R packages to be used for data manipulation and visualization
+
+```{r}
+packages = c('tidyverse','readxl','ggstatsplot','ggside','remotes','crosstalk','ggplot2','plotly')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+## Data Wrangling
+
+As mentioned before, We will be working on the chocolate data set for this exercise.
+Based on the requirements, we will only be focusing on 3 columns (company_location, cocoa_percent and rating) from which we will do the necessary calculations.
+
+As cocoa_percent contains the % symbol in the excel file, we will need to remove that and convert it the data type from character to numeric for use later on.
+
+```{r}
+chocolate <- read_csv('data/chocolate.csv')
+
+#Removing the % symbol
+chocolate$cocoa_percent <- gsub('%','',chocolate$cocoa_percent) %>%
+  as.numeric(chocolate$cocoa_percent)
+
+#Changing to 2 decimal place to reflect percentage
+chocolate$cocoa_percent <- chocolate$cocoa_percent * 0.01
+
+#Creating new datatable to remove all non-relevant columns
+choco <- chocolate %>%
+  select('company_location','cocoa_percent','rating')
+
+str(choco)
+```
+
+Having created our base 'choco' data table, we will need to filter out the top 15 company locations in this industry.
+
+In this process, we will also need to create new columns for the calculation of mean, standard deviation, standard error and proportion of chocolate with cocoa >70% as these will be our visualization objectives
+
+
+```{r}
+top15_loc <- choco %>%
+  group_by(company_location) %>%
+  summarise(company_freq = n(),
+            avg_rat = mean(rating),
+            sd_rat = sd(rating),
+            cpo70 = mean(cocoa_percent > 0.69)) %>%
+  mutate(se_rat = sd_rat/sqrt(company_freq - 1)) %>%
+  # after we create our necessary columns, we sort the table according to frequency of samples from each location and slice out the top 15
+  arrange(desc(company_freq)) %>%
+  slice_head(n = 15)
+
+#Here we do some tidying up to make the final graph look neater 
+top15_loc$avg_rat <- signif(top15_loc$avg_rat, digits = 3)
+top15_loc$sd_rat <- signif(top15_loc$sd_rat, digits = 3)
+top15_loc$se_rat <- signif(top15_loc$se_rat, digits = 3)
+top15_loc$cpo70 <- signif(top15_loc$cpo70, digits = 2)
+top15_loc <- top15_loc[,c(1,2,3,4,6,5)]
+```
+
+# Creating the Visualization
+
+With the data table prepared, we will now proceed to create our two visualizations, the first for average ratings and the second for proportion of chocolates that are over 70% cocoa.
+
+## Viz 1: Confidence Interval Plot of Average Ratings by top 15 Locations
+
+For this visualization, we will use a combination of 'geom_errorbar' and 'geom_point' to create a confidence interval graph to show both the average and the 95% confidence interval range of the ratings for each location.
+A data table with the same information is also included below the graph.
+
+The code is as shown below:
+
+```{r, code_folding = TRUE}
+bscols( widths = c(12,12),
+  ggplotly((ggplot(top15_loc) +
+  geom_errorbar(
+    aes(x=reorder(company_location,-company_freq,), 
+        ymin=avg_rat-1.98*se_rat,
+        ymax=avg_rat+1.98*se_rat),
+    width=0.2, 
+    colour="black", 
+    alpha=0.9, 
+    size=0.5) +
+  geom_point(aes
+           (x=company_location, 
+            y=avg_rat,
+             text = paste("Location:", `company_location`,"<br>Avg. Rating:",`avg_rat`,"<br>Max:", signif((avg_rat+1.98*se_rat), digits = 3), " Min:", signif((avg_rat-1.98*se_rat), digits = 3))), 
+           stat="identity", 
+           color="red",
+           size = 1.5,
+           alpha=1) +
+  xlab("Location") +
+  ylab("Average Rating") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(size = 9.5,face = "bold"))+
+  ggtitle("95% Confidence Interval of Average Ratings for Chocolates by Top 15 Production Locations")),
+  tooltip = "text"),
+  DT::datatable(top15_loc, rownames = FALSE , options = list(pageLength = 5),colnames = c("No. of Samples", "Average Rating","Std Dev","Std Error","Cocoa over 70% Prop"))
+  )
+```
+
+
+## Viz 2: Barchart for Proportion of Chocolate Samples with over 70% Cacao
+
+For this visualization, we are only using a simple bargraph to show the proportion of chocolate produced in each location that are over 70% cacao.
+
+Code as shown below:
+
+```{r, code_folding = TRUE}
+bscols(widths = c(12,12),
+  ggplotly((ggplot(top15_loc) +
+              geom_bar(
+                aes(x = reorder(company_location, - company_freq),
+                    y = cpo70,
+                    text = paste("Location:",`company_location`,
+                                 "<br>Average Rating:",`avg_rat`,
+                                 "<br>Proportion with >70% Cocoa:", `cpo70`),
+                    fill = 'slateblue'),
+                color = "black",
+                stat = "identity"
+              ) +
+  xlab("Location")+
+  ylab("Proportion") +
+  ggtitle("Proportion of Chocolate Samples with over 70% Cocoa by Top 15 Production Locations")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(size = 9.5,face = "bold"), legend.position = "none")
+),
+tooltip = "text")
+)
+```
+
+
+# Observations
+
+## Observation 01: USA-produced chocolates are fairly consistent in ratings
+The average rating of chocolate samples from the USA are not high at 3.1 but they are the most consistence with the smallest standard error at 0.0126 This is surprising given that they are the country with the most number of samples procured at 1136, more than 5 times the next highest, Canada at 177.
+
+## Observation 02: Australia has the highest average ratings
+Many famous chocolate brands are associated with European countries like Lindt (Switzerland), Godiva(Belgium) and Cadbury (UK), but surprisingly, the country with the highest average ratings for chocolates produced is actually Australia at 3.36.
+
+However, the Europe still remains a source of highly rated chocolates with 7 of the top 10 in terms of average ratings being located in Europe.
+
+## Observation 03: 2 of the 3 countries with highest average ratings have lower proportions of chocolate with cocoa over 70%
+
+Australia and Switzerland are among the lowest in terms of proportion of chocolates with cocoa over 70%. This suggests that the chocolates produced there are more likely to be more milky and sweet compared to bitter dark chocolate.
+
+Given that their ratings are also higher on average, it could suggest that the reviewers slightly favoured sweeter chocolates compared to the more bitter variants.

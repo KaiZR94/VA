@@ -12,10 +12,12 @@ navbar:
   left:
     - text: "Take-home Exercise"
       menu:
-      - text: "Take-home Exercise 1"
+      - text: "Take-home Exercise 01"
         href: "TH_Ex/TH_Ex01/TH_Ex01.html"
       - text: "Take-Home Exercise 02"
         href: "TH_Ex/TH_Ex02/TH_Ex02.html"
+      - text: "Take-home Exercise 03"
+        href: "TH_Ex/TH_Ex03/_TH_Ex03.html"
     - text: "DataViz Makeover"
       menu:
       - text: "'DataViz Makeover 01"

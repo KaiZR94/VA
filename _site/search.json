@@ -6,7 +6,7 @@
       "description": "I am currently a full-time student in my 2nd term of the Analyst track of the Masters of IT in Business in Singapore Management University.\n\n\n[My Linked-in Profile](https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/)\n\n|\n[Singapore Management University Master of IT in Business](https://scis.smu.edu.sg/master-it-business)",
       "author": [],
       "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2022-02-13T18:48:43+08:00"
+      "last_modified": "2022-02-20T20:34:14+08:00"
     },
     {
       "path": "index.html",
@@ -14,7 +14,7 @@
       "description": "This website contains a collection of work for the submission and storage of my exercises and assignment as part of the module ISSS608 Visual Analytics under the Masters of IT in Business.\n\nLast updated on: `r Sys.Date()`\n",
       "author": [],
       "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2022-02-13T18:48:46+08:00"
+      "last_modified": "2022-02-20T20:34:15+08:00"
     }
   ],
   "collections": []
