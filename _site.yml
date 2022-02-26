@@ -20,6 +20,12 @@ navbar:
         href: "TH_Ex/TH_Ex03/TH_Ex03.html"
     - text: "DataViz Makeover"
       menu:
-      - text: "'DataViz Makeover 01"
+      - text: "DataViz Makeover 01"
         href: "DataViz/DVM01/DVM01.html"
+collections:
+  posts:
+    categories: false
+    categories_metadata: false
+    authors_metadata: false
 output: distill::distill_article
+

@@ -1,0 +1,121 @@
+---
+title: "Hands On Exercise 07"
+description: |
+  Hands On Exercise 07 for Geospatial Data Analytics and Analytical Mapping using R
+author:
+  - name: Tan Jit Kai
+    url: https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/
+    affiliation: Singapore Management University Master of IT in Business
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: 
+ distill::distill_article:
+   toc: TRUE
+   toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                     eval = TRUE,
+                     warning = FALSE,
+                     message = FALSE,
+                     fig.retina = 3)
+```
+
+# Loading Packages
+```{r}
+packages = c('tmap','sf','tidyverse','ggplot2')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+
+# Loading Files and editing
+```{r}
+sgpools <- read_csv('data/aspatial/SGPools_svy21.csv')
+
+
+sgpools_sf <- st_as_sf(
+  sgpools, 
+  coords = c("XCOORD",
+             "YCOORD"),
+             crs= 3414)
+```
+
+## Plotting Point Symbol Map
+```{r}
+tmap_mode("view")
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = 1,
+           border.col = "black",
+           border.lwd = 1)
+```
+
+## Proportional
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = "Gp1Gp2 Winnings",
+           border.col = "black",
+           border.lwd = 0.5)
+```
+
+## Change color
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "OUTLET TYPE",
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 0.5)
+```
+
+## Create Twin
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_facets(by= "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)
+```
+
+# Chloro
+## Load Files
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial", 
+                layer = "MP14_SUBZONE_WEB_PL")
+
+popagsex <- read_csv("data/aspatial/respopagsex2000to2018.csv")
+```
+
+## Data Preperation
+
+```{r}
+popagsex2018_male <- popagsex %>%
+  filter(Sex == "Males") %>%
+  filter(Time == 2018) %>%
+  spread(AG, Pop) %>%
+  mutate(YOUNG = `0_to_4`+`5_to_9`+`10_to_14`+
+`15_to_19`+`20_to_24`) %>%
+mutate(`ECONOMY ACTIVE` = rowSums(.[9:13])+
+rowSums(.[15:17]))%>%
+mutate(`AGED`=rowSums(.[18:22])) %>%
+mutate(`TOTAL`=rowSums(.[5:22])) %>%  
+mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)
+/`ECONOMY ACTIVE`) %>%
+mutate_at(.vars = vars(PA, SZ), 
+          .funs = funs(toupper)) %>%
+  select(`PA`, `SZ`, `YOUNG`, 
+         `ECONOMY ACTIVE`, `AGED`, 
+         `TOTAL`, `DEPENDENCY`) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
