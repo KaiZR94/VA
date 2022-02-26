@@ -16,7 +16,4 @@ description: |
   [Singapore Management University Master of IT in Business](https://scis.smu.edu.sg/master-it-business)
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-```
 
