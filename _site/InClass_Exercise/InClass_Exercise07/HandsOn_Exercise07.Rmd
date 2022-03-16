@@ -119,3 +119,226 @@ mutate_at(.vars = vars(PA, SZ),
          `TOTAL`, `DEPENDENCY`) %>%
   filter(`ECONOMY ACTIVE` > 0)
 ```
+
+## Join Data
+
+```{r}
+mpsz_agemale2018 <- left_join(mpsz,
+                              popagsex2018_male,
+                              by = c("SUBZONE_N" = "SZ"))
+```
+
+## Plot Chloropleth
+
+```{r}
+tmap_mode("plot")
+qtm(mpsz_agemale2018, 
+    fill = "DEPENDENCY")
+```
+
+## Draw Base
+
+```{r}
+tm_shape(mpsz_agemale2018) +
+  tm_polygons()
+```
+
+Draw using Polygons
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_polygons("DEPENDENCY")
+```
+
+Draw using Fill
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY")
+```
+
+Draw Using Border
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY") +
+  tm_borders(lwd = 0.1,
+             alpha = 1)
+```
+
+tmap classificaion
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          n = 8,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+Color Scheme Manipulation
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          n = 6,
+          style = "quantile",
+          palette = "Blues") +
+  tm_borders(alpha = 0.5)
+```
+
+Reverse color
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "-Blues") +
+  tm_borders(alpha = 0.5)
+
+```
+
+## Map Layout
+
+Legend
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone \n(Quantile classification)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45,
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
+
+Map Style
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("classic")
+```
+
+
+## Cartographic Furniture
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "No. of persons") +
+  tm_layout(main.title = "Distribution of Dependency Ratio \nby planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS",
+             position = c("left", "bottom"))
+```
+
+
+## Multiple Maps
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill(c("YOUNG", "AGED"),
+          style = "equal", 
+          palette = "Blues") +
+  tm_layout(legend.position = c("right",
+                                "bottom")) +
+  tm_borders(alpha = 0.5) +
+  tmap_style("white")
+```
+
+```{r}
+tm_shape(mpsz_agemale2018)+ 
+  tm_polygons(c("DEPENDENCY","AGED"),
+          style = c("equal", "quantile"),
+          palette = list("Blues","Greens")) +
+  tm_layout(legend.position = c("right",
+                                "bottom"))
+```
+
+using TM Facets
+
+
+```{r}
+tm_shape(mpsz_agemale2018) +
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          thres.poly = 0) + 
+  tm_facets(by="REGION_N",
+            free.coords=TRUE,
+            drop.shapes=TRUE) +
+  tm_layout(legend.show = FALSE,
+            title.position = c("center",
+                               "center"), 
+            title.size = 20) +
+  tm_borders(alpha = 0.5)
+```
+
+
+TMArrange
+
+
+```{r}
+youngmap <- tm_shape(mpsz_agemale2018)+ 
+  tm_polygons("YOUNG", 
+              style = "quantile", 
+              palette = "Blues")
+agedmap <- tm_shape(mpsz_agemale2018)+ 
+  tm_polygons("AGED", 
+              style = "quantile", 
+              palette = "Blues")
+tmap_arrange(youngmap,
+             agedmap,
+             asp=1,
+             ncol=2)
+```
+
+
+Selection Criterion
+
+```{r}
+tm_shape(mpsz_agemale2018[mpsz_agemale2018$REGION_N=="CENTRAL REGION", ]) +
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(legend.outside = TRUE,
+            legend.height = 0.45, 
+            legend.width = 5.0,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```

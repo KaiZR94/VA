@@ -6,15 +6,15 @@
       "description": "I am currently a full-time student in my 2nd term of the Analyst track of the Masters of IT in Business in Singapore Management University.\n\n\n|\nThis website contains a collection of work for the submission and storage of my exercises and assignment as part of the module ISSS608 Visual Analytics under the Masters of IT in Business.\n\nLast updated on: `r Sys.Date()`\n\n\n[My Linked-in Profile](https://www.linkedin.com/in/jit-kai-tan-6b2aba12a/)\n\n|\n[Singapore Management University Master of IT in Business](https://scis.smu.edu.sg/master-it-business)",
       "author": [],
       "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2022-02-26T15:29:03+08:00"
+      "last_modified": "2022-03-16T11:57:57+08:00"
     },
     {
       "path": "index.html",
       "title": "ISSS608 - Visual Analytics",
       "author": [],
-      "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2022-02-26T15:29:08+08:00"
+      "contents": "\r\nCurrent Works:\r\nTake Home Exercises (Using R)\r\nTake Home Exercise 01\r\nTake Home Exercise 02\r\nTake Home Exercise 03\r\nData Visualization Makeovers (Using Tableau)\r\nData Visualization Makeover 01\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-03-16T11:57:58+08:00"
     }
   ],
-  "collections": ["posts/posts.json"]
+  "collections": []
 }

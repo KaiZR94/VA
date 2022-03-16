@@ -3,11 +3,19 @@ title: "ISSS608 - Visual Analytics"
 site: distill::distill_website
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+Current Works:
 
-# Learn more about creating websites with Distill at:
-# https://rstudio.github.io/distill/website.html
+__Take Home Exercises (Using R)__
 
-```
+1) [Take Home Exercise 01](TH_Ex/TH_Ex01/TH_Ex01.html)
 
+
+2) [Take Home Exercise 02](TH_Ex/TH_Ex02/TH_Ex02.html)
+
+
+3) [Take Home Exercise 03](TH_Ex/TH_Ex03/TH_Ex03.html)
+
+
+__Data Visualization Makeovers (Using Tableau)__
+
+1) [Data Visualization Makeover 01](DataViz/DVM01/DVM01.html)
