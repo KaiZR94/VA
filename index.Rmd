@@ -19,3 +19,5 @@ __Take Home Exercises (Using R)__
 __Data Visualization Makeovers (Using Tableau)__
 
 1) [Data Visualization Makeover 01](DataViz/DVM01/DVM01.html)
+
+2) [Data Visualization Makeover 02](DataViz/DVM02/DVM02.html)
