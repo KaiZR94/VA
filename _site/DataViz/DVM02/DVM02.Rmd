@@ -300,19 +300,19 @@ for this map, we will use the __MP14_SUBZONE__ and __Destination__ tables
 
 <tr style="height:50px">
   <td>1</td>
-  <td> Create a new sheet using the button in the tab selection section at the bottom.</td>
+  <td>Create a new sheet using the button in the tab selection section at the bottom.</td>
   <td><img align="left" src="img\ol0.jpg" width="400px"></td>
 </tr>
 
 <tr style="height:50px">
-<td>2<td>
-<td> In this sheet, drag geometry from the MP14_SUBZONE table to the centre of the sheet to get the base Singapore Sub Zone map.</td>
-<td><img align="left" src="img\from1.jpg" width="400px"></td>
+  <td>2</td>
+  <td>In this sheet, drag geometry from the MP14_SUBZONE table to the centre of the sheet.</td>
+  <td><img align="left" src="img\from1.jpg" width="400px"></td>
 </tr>
 
 <tr style="height:50px">
   <td>3</td>
-  <td> Frrom the Destination table, drag TOTAL_TRIPS to Color and DESTINATION_SZ to Detail under Marks</td>
+  <td>From the Destination table, drag TOTAL_TRIPS to Color and DESTINATION_SZ to Detail under Marks</td>
   <td><img align="left" src="img\to1.jpg" width="400px"></td>
 </tr>
 
@@ -488,7 +488,7 @@ Ignore the title shown in the images as those were working titles.
 
 <tr style="height:50px">
   <td>2</td>
-  <td>Drag "TIME OF DAY" to Columns and "TOTAL TRIPS" to Rows.</td>
+  <td>Drag "TIME OF DAY" to Columns and "TOTAL TRIPS" to Rows</td>
   <td><img align="left" src="img\DL2.jpg" width="400px"></td>
 </tr>
 
