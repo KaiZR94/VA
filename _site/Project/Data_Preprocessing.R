@@ -21,3 +21,5 @@ df <- df %>%
   mutate("Tenure Duration" = str_split(df$Tenure, " ", simplify = TRUE)[,1],
          "Tenure Date" = str_split(df$Tenure, " ", simplify = TRUE)[,4] %>%
            strptime(format = "%d/%m/%Y"))
+#writecsv
+write.csv(df,"dataprocessed_df.csv", row.names = FALSE)
