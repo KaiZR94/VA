@@ -3,7 +3,7 @@ title: "ISSS608 - Visual Analytics"
 site: distill::distill_website
 ---
 
-Current Works:
+Completed Works:
 
 __Take Home Exercises (Using R)__
 
@@ -27,3 +27,10 @@ __Visual Analysis Project (Using R & Shiny)__
 [REALVIS Project Website](https://g8vaproject.netlify.app/)
 
 [REALVIS Shiny App Link](https://hengguang.shinyapps.io/REALVIS/)
+
+___REALVIS PROJECT POSTER___
+```{r, echo = FALSE, fig.align = 'center', out.width = '100%', results = 'markup'} 
+knitr::include_graphics("Project/Poster_REALVIS.png")  
+```
+
+

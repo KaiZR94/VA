@@ -24,5 +24,11 @@ navbar:
         href: "DataViz/DVM01/DVM01.html"
       - text: "DataViz Makeover 02"
         href: "DataViz/DVM02/DVM02.html"
+    - text: "REALVIS VA Project"
+      menu:
+      - text: "REALVIS Netlify Link"
+        href: "https://g8vaproject.netlify.app/"
+      - text: "REALVIS SHINY App"
+        href: "https://hengguang.shinyapps.io/REALVIS/"
 output: distill::distill_article
 
